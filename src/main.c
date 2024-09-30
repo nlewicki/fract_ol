@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2024/09/30 16:28:01 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/09/30 16:40:19 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,6 @@
 #define HEIGHT 540
 
 int draw_fractal(t_fractol *fractol, char *type, double cx, double cy);
-void calculate_mandelbrot(t_fractol *fractol);
-void calculate_julia(t_fractol *fractol, double cx, double cy);
-void calculate_burning_ship(t_fractol *fractol);
 
 void put_color_to_pixel(t_fractol *fractol, int x, int y, int color)
 {
@@ -99,8 +96,6 @@ int draw_fractal(t_fractol *fractol, char *type, double cx, double cy)
                 calculate_mandelbrot(fractol);
             else if (ft_strncmp(type, "julia", 5) == 0)
                 calculate_julia(fractol, cx, cy);
-            else if (ft_strncmp(type, "ship", 4) == 0)
-                calculate_burning_ship(fractol);
             else
                 exit_fractal(fractol);
             fractol->y++;
@@ -109,79 +104,4 @@ int draw_fractal(t_fractol *fractol, char *type, double cx, double cy)
         fractol->y = 0;
     }
     return (0);
-}
-
-void calculate_mandelbrot(t_fractol *fractol)
-{
-    int i;
-    double x_temp;
-
-    fractol->name = "mandel";
-    i = 0;
-    fractol->zx = 0.0;
-    fractol->zy = 0.0;
-    fractol->cx = (fractol->x / fractol->zoom) + fractol->offset_x;
-    fractol->cy = (fractol->y / fractol->zoom) + fractol->offset_y;
-    while (++i < fractol->max_iterations)
-    {
-        x_temp = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
-        fractol->zy = 2.0 * fractol->zx * fractol->zy + fractol->cy;
-        fractol->zx = x_temp;
-        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
-            break;
-    }
-    if (i == fractol->max_iterations)
-        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
-    else
-        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * i));
-}
-
-void calculate_julia(t_fractol *fractol, double cx, double cy)
-{
-    int i;
-    double tmp;
-
-    fractol->name = "julia";
-    fractol->cx = cx;
-    fractol->cy = cy;
-    fractol->zx = fractol->x / fractol->zoom + fractol->offset_x;
-    fractol->zy = fractol->y / fractol->zoom + fractol->offset_y;
-    i = 0;
-    while (++i < fractol->max_iterations)
-    {
-        tmp = fractol->zx;
-        fractol->zx = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
-        fractol->zy = 2 * fractol->zy * tmp + fractol->cy;
-        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
-            break;
-    }
-    if (i == fractol->max_iterations)
-        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
-    else
-        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * (i % 255)));
-}
-
-void calculate_burning_ship(t_fractol *fractol)
-{
-    int i;
-    double x_temp;
-
-    fractol->name = "ship";
-    i = 0;
-    fractol->zx = 0.0;
-    fractol->zy = 0.0;
-    fractol->cx = (fractol->x / fractol->zoom) + fractol->offset_x;
-    fractol->cy = (fractol->y / fractol->zoom) + fractol->offset_y;
-    while (++i < fractol->max_iterations)
-    {
-        x_temp = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
-        fractol->zy = fabs(2.0 * fractol->zx * fractol->zy) + fractol->cy;
-        fractol->zx = fabs(x_temp);
-        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
-            break;
-    }
-    if (i == fractol->max_iterations)
-        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
-    else
-        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * i));
 }
