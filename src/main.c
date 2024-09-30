@@ -3,93 +3,185 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/25 10:36:45 by nlewicki          #+#    #+#             */
-/*   Updated: 2024/09/25 11:19:34 by nlewicki         ###   ########.fr       */
+/*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
+/*   Updated: 2024/09/30 16:28:01 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include "fract_ol.h"
 
-#define WIDTH 512
-#define HEIGHT 512
+#define WIDTH 960
+#define HEIGHT 540
 
-static mlx_image_t* image;
+int draw_fractal(t_fractol *fractol, char *type, double cx, double cy);
+void calculate_mandelbrot(t_fractol *fractol);
+void calculate_julia(t_fractol *fractol, double cx, double cy);
+void calculate_burning_ship(t_fractol *fractol);
 
-// -----------------------------------------------------------------------------
-
-int32_t ft_pixel(int32_t r, int32_t g, int32_t b, int32_t a)
+void put_color_to_pixel(t_fractol *fractol, int x, int y, int color)
 {
-    return (r << 24 | g << 16 | b << 8 | a);
+    uint32_t *pixel = (uint32_t *)(fractol->image->pixels);
+    pixel[y * WIDTH + x] = color;
 }
 
-void ft_randomize(void* param)
+void exit_fractal(t_fractol *fractol)
 {
-	(void)param;
-	for (uint32_t i = 0; i < image->width; ++i)
-	{
-		for (uint32_t y = 0; y < image->height; ++y)
-		{
-			uint32_t color = ft_pixel(
-				rand() % 0xFF, // R
-				rand() % 0xFF, // G
-				rand() % 0xFF, // B
-				rand() % 0xFF  // A
-			);
-			mlx_put_pixel(image, i, y, color);
-		}
-	}
+    ft_putendl_fd("Exiting...", 1);
+    if (fractol->image)
+        mlx_delete_image(fractol->mlx, fractol->image);
+    if (fractol->mlx)
+        mlx_terminate(fractol->mlx);
+    exit(1);
 }
 
-void ft_hook(void* param)
+void	key_hook(mlx_key_data_t key, void *param)
 {
-	mlx_t* mlx = param;
+	t_fractol *fractol = (t_fractol *)param;
 
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(mlx);
-	if (mlx_is_key_down(mlx, MLX_KEY_UP))
-		image->instances[0].y -= 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
-		image->instances[0].y += 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
-		image->instances[0].x -= 5;
-	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
-		image->instances[0].x += 5;
+	if (key.key == MLX_KEY_ESCAPE)
+		exit_fractal(fractol);
 }
 
-// -----------------------------------------------------------------------------
-
-int32_t main(void)
+int main(int argc, char *argv[])
 {
-	mlx_t* mlx;
+ 	t_fractol	fractol;
+	char 		*type;
 
-	// Gotta error check this stuff
-	if (!(mlx = mlx_init(WIDTH, HEIGHT, "MLX42", true)))
-	{
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (!(image = mlx_new_image(mlx, 128, 128)))
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
-	if (mlx_image_to_window(mlx, image, 0, 0) == -1)
-	{
-		mlx_close_window(mlx);
-		puts(mlx_strerror(mlx_errno));
-		return(EXIT_FAILURE);
-	}
+	if (argc < 2 || argc > 4)
+    {
+        ft_putendl_fd("Usage: ./fract_ol [mandel, julia, ship] [cx] [cy]", 1);
+        exit(1);
+    }
+	type = argv[1];
+    fractol.cx = 0.285; 
+    fractol.cy = 0.01;
+    if (argc >= 3)
+        fractol.cx = atof(argv[2]);
+    if (argc == 4)
+        fractol.cy = atof(argv[3]);
+	printf("cx: %f, cy: %f\n", fractol.cx, fractol.cy);
+	type = argv[1];
+    fractol.mlx = mlx_init(WIDTH, HEIGHT, "Fract_ol", true);
+    fractol.image = mlx_new_image(fractol.mlx, WIDTH, HEIGHT);
+    fractol.zoom = 200;
+    fractol.offset_x = -2.0;
+    fractol.offset_y = -2.0;
+    fractol.max_iterations = 100;
+    fractol.color = 0xFCBE11;
+    fractol.x = 0;
+    fractol.y = 0;
 
-	mlx_loop_hook(mlx, ft_randomize, mlx);
-	mlx_loop_hook(mlx, ft_hook, mlx);
+    draw_fractal(&fractol,	type, fractol.cx, fractol.cy);
 
-	mlx_loop(mlx);
-	mlx_terminate(mlx);
-	return (EXIT_SUCCESS);
+    // Show the image
+    mlx_image_to_window(fractol.mlx, fractol.image, 0, 0);
+
+    // Main loop
+	mlx_key_hook(fractol.mlx, key_hook, &fractol);
+    mlx_loop(fractol.mlx);
+    // Cleanup
+    mlx_delete_image(fractol.mlx, fractol.image);
+    mlx_terminate(fractol.mlx);
+    return (0);
+}
+
+int draw_fractal(t_fractol *fractol, char *type, double cx, double cy)
+{
+    fractol->x = 0;
+    fractol->y = 0;
+    while (fractol->x < WIDTH)
+    {
+        while (fractol->y < HEIGHT)
+        {
+            if (ft_strncmp(type, "mandel", 6) == 0)
+                calculate_mandelbrot(fractol);
+            else if (ft_strncmp(type, "julia", 5) == 0)
+                calculate_julia(fractol, cx, cy);
+            else if (ft_strncmp(type, "ship", 4) == 0)
+                calculate_burning_ship(fractol);
+            else
+                exit_fractal(fractol);
+            fractol->y++;
+        }
+        fractol->x++;
+        fractol->y = 0;
+    }
+    return (0);
+}
+
+void calculate_mandelbrot(t_fractol *fractol)
+{
+    int i;
+    double x_temp;
+
+    fractol->name = "mandel";
+    i = 0;
+    fractol->zx = 0.0;
+    fractol->zy = 0.0;
+    fractol->cx = (fractol->x / fractol->zoom) + fractol->offset_x;
+    fractol->cy = (fractol->y / fractol->zoom) + fractol->offset_y;
+    while (++i < fractol->max_iterations)
+    {
+        x_temp = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
+        fractol->zy = 2.0 * fractol->zx * fractol->zy + fractol->cy;
+        fractol->zx = x_temp;
+        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
+            break;
+    }
+    if (i == fractol->max_iterations)
+        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
+    else
+        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * i));
+}
+
+void calculate_julia(t_fractol *fractol, double cx, double cy)
+{
+    int i;
+    double tmp;
+
+    fractol->name = "julia";
+    fractol->cx = cx;
+    fractol->cy = cy;
+    fractol->zx = fractol->x / fractol->zoom + fractol->offset_x;
+    fractol->zy = fractol->y / fractol->zoom + fractol->offset_y;
+    i = 0;
+    while (++i < fractol->max_iterations)
+    {
+        tmp = fractol->zx;
+        fractol->zx = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
+        fractol->zy = 2 * fractol->zy * tmp + fractol->cy;
+        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
+            break;
+    }
+    if (i == fractol->max_iterations)
+        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
+    else
+        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * (i % 255)));
+}
+
+void calculate_burning_ship(t_fractol *fractol)
+{
+    int i;
+    double x_temp;
+
+    fractol->name = "ship";
+    i = 0;
+    fractol->zx = 0.0;
+    fractol->zy = 0.0;
+    fractol->cx = (fractol->x / fractol->zoom) + fractol->offset_x;
+    fractol->cy = (fractol->y / fractol->zoom) + fractol->offset_y;
+    while (++i < fractol->max_iterations)
+    {
+        x_temp = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
+        fractol->zy = fabs(2.0 * fractol->zx * fractol->zy) + fractol->cy;
+        fractol->zx = fabs(x_temp);
+        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
+            break;
+    }
+    if (i == fractol->max_iterations)
+        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
+    else
+        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * i));
 }
