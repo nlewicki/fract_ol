@@ -1,4 +1,6 @@
-CFILES =	src/main.c
+CFILES =	src/main.c \
+			src/julia.c \
+			src/mandel.c \
 
 NAME = fractol
 CC = cc
@@ -16,7 +18,7 @@ BUILD_DIR = $(REPO_DIR)/build
 MLX42_LIB = $(BUILD_DIR)/libmlx42.a
 MLX42_INCLUDES = -I $(REPO_DIR)/include
 
-FRAMEWORKS = -lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
+FRAMEWORKS = -L$(shell brew --prefix glfw)/lib -lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 all: $(NAME)
 
