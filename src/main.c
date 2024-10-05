@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2024/09/30 16:40:19 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/10/01 13:49:59 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 #define WIDTH 960
 #define HEIGHT 540
-
-int draw_fractal(t_fractol *fractol, char *type, double cx, double cy);
 
 void put_color_to_pixel(t_fractol *fractol, int x, int y, int color)
 {
@@ -51,9 +49,9 @@ int main(int argc, char *argv[])
         ft_putendl_fd("Usage: ./fract_ol [mandel, julia, ship] [cx] [cy]", 1);
         exit(1);
     }
-	type = argv[1];
     fractol.cx = 0.285; 
-    fractol.cy = 0.01;
+    fractol.cy = 0.200;
+	type = argv[1];
     if (argc >= 3)
         fractol.cx = atof(argv[2]);
     if (argc == 4)
@@ -69,16 +67,10 @@ int main(int argc, char *argv[])
     fractol.color = 0xFCBE11;
     fractol.x = 0;
     fractol.y = 0;
-
     draw_fractal(&fractol,	type, fractol.cx, fractol.cy);
-
-    // Show the image
     mlx_image_to_window(fractol.mlx, fractol.image, 0, 0);
-
-    // Main loop
 	mlx_key_hook(fractol.mlx, key_hook, &fractol);
     mlx_loop(fractol.mlx);
-    // Cleanup
     mlx_delete_image(fractol.mlx, fractol.image);
     mlx_terminate(fractol.mlx);
     return (0);

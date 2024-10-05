@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:28:36 by nlewicki          #+#    #+#             */
-/*   Updated: 2024/10/01 13:44:20 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/10/01 13:50:04 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_fractol
 	char *name;
 } t_fractol;
 
+int draw_fractal(t_fractol *fractol, char *type, double cx, double cy);
 void calculate_mandelbrot(t_fractol *fractol);
 void calculate_julia(t_fractol *fractol, double cx, double cy);
 void put_color_to_pixel(t_fractol *fractol, int x, int y, int color);
