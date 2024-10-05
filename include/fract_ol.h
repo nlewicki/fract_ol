@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:28:36 by nlewicki          #+#    #+#             */
-/*   Updated: 2024/10/01 13:50:04 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/10/05 19:27:20 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,14 @@
 # include "../lib/libft/ft_printf.h"
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 
+#define WIDTH 1280
+#define HEIGHT 720
+
 typedef struct s_fractol
 {
-	mlx_t *mlx;
-	mlx_image_t *image;
+	mlx_t* mlx;
+	mlx_image_t* img;
+	char *type;
 	int zoom;
 	double offset_x;
 	double offset_y;
@@ -33,16 +37,13 @@ typedef struct s_fractol
 	int color;
 	int x;
 	int y;
-	double zx;
-	double zy;
 	double cx;
 	double cy;
-	char *name;
 } t_fractol;
 
-int draw_fractal(t_fractol *fractol, char *type, double cx, double cy);
+int get_rgba(int r, int g, int b, int a);
+int draw_fractol(t_fractol *fractol);
 void calculate_mandelbrot(t_fractol *fractol);
-void calculate_julia(t_fractol *fractol, double cx, double cy);
-void put_color_to_pixel(t_fractol *fractol, int x, int y, int color);
+void calculate_julia(t_fractol *fractol);
 
 #endif

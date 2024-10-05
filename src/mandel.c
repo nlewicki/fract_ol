@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 16:38:07 by nicolewicki       #+#    #+#             */
-/*   Updated: 2024/09/30 16:39:34 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/10/05 19:31:10 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,36 @@
 void calculate_mandelbrot(t_fractol *fractol)
 {
     int i;
-    double x_temp;
+    double x0 = (fractol->x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
+    double y0 = (fractol->y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
+    double x = 0.0;
+    double y = 0.0;
+    double x2 = 0.0;
+    double y2 = 0.0;
 
-    fractol->name = "mandel";
     i = 0;
-    fractol->zx = 0.0;
-    fractol->zy = 0.0;
-    fractol->cx = (fractol->x / fractol->zoom) + fractol->offset_x;
-    fractol->cy = (fractol->y / fractol->zoom) + fractol->offset_y;
-    while (++i < fractol->max_iterations)
+    while (x2 + y2 <= 4 && i < fractol->max_iterations)
     {
-        x_temp = fractol->zx * fractol->zx - fractol->zy * fractol->zy + fractol->cx;
-        fractol->zy = 2.0 * fractol->zx * fractol->zy + fractol->cy;
-        fractol->zx = x_temp;
-        if (fractol->zx * fractol->zx + fractol->zy * fractol->zy >= 4.0)
-            break;
+        y = 2 * x * y + y0;
+        x = x2 - y2 + x0;
+        x2 = x * x;
+        y2 = y * y;
+        i++;
     }
+
     if (i == fractol->max_iterations)
-        put_color_to_pixel(fractol, fractol->x, fractol->y, 0x000000);
+    {
+        mlx_put_pixel(fractol->img, fractol->x, fractol->y, 0x000000);
+    }
     else
-        put_color_to_pixel(fractol, fractol->x, fractol->y, (fractol->color * i));
+    {
+        double zn = sqrt(x * x + y * y);
+        double nu = log2(log2(zn) / log2(2.0)) / log2(2.0);
+        double t = (i + 1 - nu) / fractol->max_iterations;
+        
+        int r = (int)(9 * (1 - t) * t * t * t * 255);
+        int g = (int)(15 * (1 - t) * (1 - t) * t * t * 255);
+        int b = (int)(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);
+        mlx_put_pixel(fractol->img, fractol->x, fractol->y, get_rgba(r, g, b, 255));
+    }
 }

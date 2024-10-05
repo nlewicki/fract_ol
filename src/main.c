@@ -6,26 +6,17 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2024/10/01 13:49:59 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/10/05 19:37:36 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fract_ol.h"
 
-#define WIDTH 960
-#define HEIGHT 540
-
-void put_color_to_pixel(t_fractol *fractol, int x, int y, int color)
-{
-    uint32_t *pixel = (uint32_t *)(fractol->image->pixels);
-    pixel[y * WIDTH + x] = color;
-}
-
-void exit_fractal(t_fractol *fractol)
+void exit_fractol(t_fractol *fractol)
 {
     ft_putendl_fd("Exiting...", 1);
-    if (fractol->image)
-        mlx_delete_image(fractol->mlx, fractol->image);
+    if (fractol->img)
+        mlx_delete_image(fractol->mlx, fractol->img);
     if (fractol->mlx)
         mlx_terminate(fractol->mlx);
     exit(1);
@@ -36,60 +27,95 @@ void	key_hook(mlx_key_data_t key, void *param)
 	t_fractol *fractol = (t_fractol *)param;
 
 	if (key.key == MLX_KEY_ESCAPE)
-		exit_fractal(fractol);
+		exit_fractol(fractol);
+    if (key.key == MLX_KEY_UP)
+        fractol->offset_y += 0.1;
+    if (key.key == MLX_KEY_DOWN)
+        fractol->offset_y -= 0.1;
+    if (key.key == MLX_KEY_LEFT)
+        fractol->offset_x += 0.1;
+    if (key.key == MLX_KEY_RIGHT)   
+    {
+        write(1, "right\n", 6);
+        fractol->offset_x -= 0.1;
+    }
+    if (key.key == MLX_KEY_EQUAL)
+        fractol->zoom += 10;
+    if (key.key == MLX_KEY_MINUS)
+        fractol->zoom -= 10;
+    if (key.key == MLX_KEY_SPACE)
+        fractol->max_iterations += 10;
+    draw_fractol(fractol);
+}
+static void ft_error(void)
+{
+	fprintf(stderr, "%s in mlx\n", mlx_strerror(mlx_errno));
+	exit(EXIT_FAILURE);
+}
+
+int get_rgba(int r, int g, int b, int a)
+{
+    return (r << 24 | g << 16 | b << 8 | a);
+}
+
+void    init_fractol(t_fractol *fractol, int argc, char *argv[])
+{
+	if (argc < 2 || argc > 4)
+    {
+        ft_putendl_fd("Usage: ./fract_ol [mandel, julia, ...] [cx] [cy]", 1);
+        ft_error();
+    }
+	fractol->type = ft_strdup(argv[1]);
+    fractol->cx = 0.7; 
+    fractol->cy = 0.27015;
+    fractol->offset_x = 0;
+    fractol->offset_y = 0;
+    fractol->max_iterations = 100;
+    fractol->color = 0xFCBE11;
+    fractol->zoom = 100;
+    if (argc >= 3)
+        fractol->cx = atof(argv[2]);
+    if (argc == 4)
+        fractol->cy = atof(argv[3]);
+	printf("cx: %f, cy: %f\n", fractol->cx, fractol->cy);
 }
 
 int main(int argc, char *argv[])
 {
  	t_fractol	fractol;
-	char 		*type;
 
-	if (argc < 2 || argc > 4)
-    {
-        ft_putendl_fd("Usage: ./fract_ol [mandel, julia, ship] [cx] [cy]", 1);
-        exit(1);
-    }
-    fractol.cx = 0.285; 
-    fractol.cy = 0.200;
-	type = argv[1];
-    if (argc >= 3)
-        fractol.cx = atof(argv[2]);
-    if (argc == 4)
-        fractol.cy = atof(argv[3]);
-	printf("cx: %f, cy: %f\n", fractol.cx, fractol.cy);
-	type = argv[1];
-    fractol.mlx = mlx_init(WIDTH, HEIGHT, "Fract_ol", true);
-    fractol.image = mlx_new_image(fractol.mlx, WIDTH, HEIGHT);
-    fractol.zoom = 200;
-    fractol.offset_x = -2.0;
-    fractol.offset_y = -2.0;
-    fractol.max_iterations = 100;
-    fractol.color = 0xFCBE11;
-    fractol.x = 0;
-    fractol.y = 0;
-    draw_fractal(&fractol,	type, fractol.cx, fractol.cy);
-    mlx_image_to_window(fractol.mlx, fractol.image, 0, 0);
+    (void)argc;
+    (void)argv;
+    init_fractol(&fractol, argc, argv);
+    mlx_set_setting(MLX_MAXIMIZED, false);
+    fractol.mlx = mlx_init(WIDTH, HEIGHT, "fractol", true);
+	if (!fractol.mlx)
+		return (1);
+    fractol.img = mlx_new_image(fractol.mlx, WIDTH, HEIGHT);
+    if (!fractol.img || (mlx_image_to_window(fractol.mlx, fractol.img, 0, 0) < 0))
+		return (2);
+    draw_fractol(&fractol);
 	mlx_key_hook(fractol.mlx, key_hook, &fractol);
     mlx_loop(fractol.mlx);
-    mlx_delete_image(fractol.mlx, fractol.image);
     mlx_terminate(fractol.mlx);
     return (0);
 }
 
-int draw_fractal(t_fractol *fractol, char *type, double cx, double cy)
+int draw_fractol(t_fractol *fractol)
 {
     fractol->x = 0;
     fractol->y = 0;
+    printf("Drawing fractal of type: %s\n", fractol->type); // Debugging type
     while (fractol->x < WIDTH)
     {
         while (fractol->y < HEIGHT)
         {
-            if (ft_strncmp(type, "mandel", 6) == 0)
+            if (ft_strncmp(fractol->type, "julia", 5) == 0)
+                calculate_julia(fractol);
+            else if (ft_strncmp(fractol->type, "mandel", 6) == 0)
                 calculate_mandelbrot(fractol);
-            else if (ft_strncmp(type, "julia", 5) == 0)
-                calculate_julia(fractol, cx, cy);
             else
-                exit_fractal(fractol);
+                exit_fractol(fractol);
             fractol->y++;
         }
         fractol->x++;
