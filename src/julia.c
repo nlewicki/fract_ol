@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 16:38:18 by nicolewicki       #+#    #+#             */
-/*   Updated: 2024/10/05 19:58:34 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2024/10/08 16:31:31 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,25 +14,28 @@
 
 void calculate_julia(t_fractol *fractol)
 {
-    int i;
-    double tmp;
-    double zx = (fractol->x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
-    double zy = (fractol->y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
+    t_coords    coords;
+    double      tmp;
+    double      t;
+    
+    coords.zx = (fractol->x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
+    coords.zy = (fractol->y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
 
-    i = 0;
-    while (i < fractol->max_iterations && (zx * zx + zy * zy < 4.0))
+    coords.i = 0;
+    while (coords.i < fractol->max_iterations 
+        && (coords.zx * coords.zx + coords.zy * coords.zy < 4.0))
     {
-        tmp = zx * zx - zy * zy + fractol->cx;
-        zy = 2.0 * zx * zy + fractol->cy;
-        zx = tmp;
-        i++;
+        tmp = coords.zx * coords.zx - coords.zy * coords.zy + fractol->cx;
+        coords.zy = 2.0 * coords.zx * coords.zy + fractol->cy;
+        coords.zx = tmp;
+        coords.i++;
     }
-    if (i == fractol->max_iterations)
+    if (coords.i == fractol->max_iterations)
         mlx_put_pixel(fractol->img, fractol->x, fractol->y, 0x000000);
     else
     {
-        double t = (double)i / fractol->max_iterations;
-        int color = psychedelic_color(20 * t);
-        mlx_put_pixel(fractol->img, fractol->x, fractol->y, color);
+        t = (double)coords.i / fractol->max_iterations;
+        fractol->color = psychedelic_color(20 * t);
+        mlx_put_pixel(fractol->img, fractol->x, fractol->y, fractol->color);
     }
 }
