@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fract_ol.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
+/*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:28:36 by nlewicki          #+#    #+#             */
-/*   Updated: 2024/10/08 16:28:37 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2025/02/13 10:03:00 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include "../lib/libft/ft_printf.h"
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 
-#define WIDTH 720
-#define HEIGHT 720
+#define WIDTH 900
+#define HEIGHT 800
 
 typedef struct s_fractol
 {

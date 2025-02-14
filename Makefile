@@ -21,7 +21,7 @@ MLX42_INCLUDES = -I $(REPO_DIR)/include
 FRAMEWORKS = -L$(shell brew --prefix glfw)/lib -lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 all: $(NAME)
-
+ 
 $(REPO_DIR):
 	@echo "Cloning MLX42 repository"
 	@git clone $(REPO_URL) $(REPO_DIR)
@@ -34,7 +34,7 @@ $(MLX42_LIB): $(BUILD_DIR)
 	@echo "Building MLX42"
 	@make -C $(BUILD_DIR)
 
-$(NAME): $(MLX42_LIB) $(OFILES) $(LIBFT) 
+$(NAME): $(MLX42_LIB) $(OFILES) $(LIBFT)
 	@echo "Linking $(NAME)"
 	@$(CC) $(OFILES) $(LIBFT) $(MLX42_LIB) -o $(NAME) $(FRAMEWORKS)
 	clear
