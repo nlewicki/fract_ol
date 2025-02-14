@@ -1,6 +1,8 @@
 CFILES =	src/main.c \
 			src/julia.c \
 			src/mandel.c \
+			src/color.c \
+			src/keyhooks.c \
 
 NAME = fractol
 CC = cc
@@ -21,7 +23,7 @@ MLX42_INCLUDES = -I $(REPO_DIR)/include
 FRAMEWORKS = -L$(shell brew --prefix glfw)/lib -lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo
 
 all: $(NAME)
- 
+
 $(REPO_DIR):
 	@echo "Cloning MLX42 repository"
 	@git clone $(REPO_URL) $(REPO_DIR)
