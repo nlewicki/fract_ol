@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:28:36 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/13 10:03:00 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/14 12:20:28 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,46 +22,55 @@
 # include "../lib/libft/ft_printf.h"
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 
-#define WIDTH 900
+#define WIDTH 800
 #define HEIGHT 800
+
+typedef struct s_color
+{
+	int r_s;
+	int g_s;
+	int b_s;
+	int a_s;
+}   t_color;
+
+typedef struct s_window
+{
+	int pixel_len;
+	int line_len;
+	int endian;
+} t_window;
 
 typedef struct s_fractol
 {
-	mlx_t* mlx;
-	mlx_image_t* img;
-	char *type;
-	int zoom;
-	double offset_x;
-	double offset_y;
-	int max_iterations;
-	int color;
-	int x;
-	int y;
-	double cx;
-	double cy;
-} t_fractol;
+	mlx_t*			mlx;
+	mlx_image_t*	img;
+	t_window		window;
+	char 			*type;
+	int				zoom;
+	double			offset_x;
+	double			offset_y;
+	double			mouse_x;
+	double			mouse_y;
+	u_int32_t		color;
+	int				iter;
+}	t_fractol;
 
 typedef struct s_coords
 {
-	double x;
-	double y;
-	double zx;
-	double zy;
-	double x0;
-	double y0;
-	double x2;
-	double y2;
-	int 	i;
-	int 	j;
-} t_coords;
+	int	x;
+	int	y;
+}	t_coords;
+
+typedef struct s_complex
+{
+	double	real;
+	double	imag;
+}	t_complex;
 
 
-double smooth_color(double iter, double max_iter, double x, double y);
-int psychedelic_color(double t);
 void my_mlx_pixel_put(mlx_image_t* img, int x, int y, int color);
-int get_rgba(int r, int g, int b, int a);
 int draw_fractol(t_fractol *fractol);
-void calculate_mandelbrot(t_fractol *fractol);
+int calculate_mandelbrot(t_fractol *fractol, t_complex *c);
 void calculate_julia(t_fractol *fractol);
 
 #endif

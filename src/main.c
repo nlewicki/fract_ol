@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2025/02/14 10:09:04 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/14 12:58:54 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@ void my_mlx_pixel_put(mlx_image_t* img, int x, int y, int color)
 {
     if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
     {
-        uint8_t *dst = img->pixels + (y * img->width + x) * sizeof(int);
-        *(unsigned int*)dst = color;
+        mlx_put_pixel(img, x, y, color);
     }
 }
 
@@ -31,31 +30,6 @@ void exit_fractol(t_fractol *fractol)
     exit(1);
 }
 
-// REWORk
-double smooth_color(double iter, double max_iter, double x, double y)
-{
-    if (iter < max_iter) {
-        double log_zn = log(x*x + y*y) / 2.0;
-        double nu = log(log_zn / log(2)) / log(2);
-        return iter + 1 - nu;
-    }
-    return (iter);
-}
-
-int psychedelic_color(double t)
-{
-    double r = 0.5 + 0.5 * sin(3.0 * t);
-    double g = 0.5 + 0.5 * sin(3.0 * t + 2.094);
-    double b = 0.5 + 0.5 * sin(3.0 * t + 4.188);
-    return (get_rgba((int)(r * 255), (int)(g * 255), (int)(b * 255), 255));
-}
-
-int get_rgba(int r, int g, int b, int a)
-{
-    return (r << 24 | g << 16 | b << 8 | a);
-}
-// =--------------------=
-
 static void ft_error(void)
 {
 	fprintf(stderr, "%s in mlx\n", mlx_strerror(mlx_errno));
@@ -64,29 +38,19 @@ static void ft_error(void)
 
 void    init_fractol(t_fractol *fractol, int argc, char *argv[])
 {
-	if (argc < 2 || argc > 4)
+    if (argc < 2 || argc > 4)
     {
         ft_putendl_fd("Usage: ./fract_ol [m(mandel), j(julia), ...] [cx] [cy]", 1);
         ft_error();
     }
-	fractol->type = ft_strdup(argv[1]);
-    fractol->cx = -0.4;
-    fractol->cy = 0.6;
-    if (ft_strcmp(fractol->type, "m") == 0)
-    {
-        fractol->offset_x = -0.6;
-    }
-    else
-        fractol->offset_x = 0;
-    fractol->offset_y = 0;
-    fractol->max_iterations = 20;
-    fractol->color = 0xFCBE11;
-    fractol->zoom = 250;
-    if (argc >= 3)
-        fractol->cx = atof(argv[2]);
-    if (argc == 4)
-        fractol->cy = atof(argv[3]);
-	printf("cx: %f, cy: %f\n", fractol->cx, fractol->cy);
+    fractol->type = ft_strdup(argv[1]);
+    fractol->zoom = HEIGHT / 4;
+    fractol->mouse_x = 0;
+    fractol->mouse_y = 0;
+    fractol->offset_x = -0.5;  // Changed from -2
+    fractol->offset_y = 0;     // Changed from -2
+    fractol->iter = 100;       // Reduced from 256 for initial rendering
+    fractol->color = 0xFFFFFFFF;  // Changed to start with full blue (RGBA)
 }
 
 // int redraw(t_fractol *fractol)
@@ -111,13 +75,14 @@ void	key_hook(mlx_key_data_t key, void *param)
     if (key.key == MLX_KEY_MINUS)
         fractol->zoom -= 10;
     if (key.key == MLX_KEY_SPACE)
-        fractol->max_iterations += 10;
-    if (key.key == MLX_KEY_M && fractol->max_iterations > 10)
-        fractol->max_iterations -= 10;
+        fractol->iter += 10;
+    if (key.key == MLX_KEY_M && fractol->iter > 10)
+        fractol->iter -= 10;
     draw_fractol(fractol);
 }
 
 
+#include <memory.h>
 
 int main(int argc, char *argv[])
 {
@@ -139,24 +104,49 @@ int main(int argc, char *argv[])
     return (0);
 }
 
+int calc_color(int iter, int max_iter, int start_color)
+{
+    t_color color;
+    float t;
+
+    if (iter == max_iter)
+        return (0);  // Black for points in the set
+
+    t = (float)iter / max_iter;
+    color.r_s = ((start_color >> 24) & 0xFF) * t;
+    color.g_s = ((start_color >> 16) & 0xFF) * t;
+    color.b_s = ((start_color >> 8) & 0xFF) * t;
+
+    return ((int)(color.r_s) << 16 | (int)(color.g_s) << 8 | (int)(color.b_s) | 0xFF);
+}
+
+void clear_window(mlx_image_t *img)
+{
+    memset(img->pixels, 0x00000000, img->width * img->height * sizeof(int32_t));
+}
+
 int draw_fractol(t_fractol *fractol)
 {
-    if (fractol->img)
-        mlx_delete_image(fractol->mlx, fractol->img);
+    t_complex c;
+    int iter;
+    int x;
+    int y;
 
-    // Create a new image
-    fractol->img = mlx_new_image(fractol->mlx, WIDTH, HEIGHT);
-    if (!fractol->img)
-        return (1);
+    // clear_window(fractol->img);
 
-    fractol->x = 0;
-    fractol->y = 0;
-    if (ft_strcmp(fractol->type, "j") == 0)
-        calculate_julia(fractol);
-    else if (ft_strcmp(fractol->type, "m") == 0)
-        calculate_mandelbrot(fractol);
-    else
-        exit_fractol(fractol);
+    y = -1;
+    while (++y < HEIGHT)
+    {
+        x = -1;
+        while (++x < WIDTH)
+        {
+            c.real = (x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
+            c.imag = (y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
+            iter = calculate_mandelbrot(fractol, &c);
+            my_mlx_pixel_put(fractol->img, x, y, calc_color(iter, fractol->iter, fractol->color));
+            // printf("x: %d, y: %d, iter: %d\n", x, y, iter);
+        }
+    }
 
     if (mlx_image_to_window(fractol->mlx, fractol->img, 0, 0) < 0)
         return (1);
