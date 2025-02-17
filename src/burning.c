@@ -25,7 +25,7 @@ int	calc_burning_ship(t_fractol *fractol, t_complex *c)
 	{
 		real_temp = z.real * z.real - z.imag * z.imag + c->real;
 		z.imag = fabs(2 * z.real * z.imag) + c->imag;
-		z.real = fabs(real_temp);
+		z.real = (real_temp);
 	}
 	return (i);
 }
