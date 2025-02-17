@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2025/02/17 15:13:43 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2025/02/17 16:01:49 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,29 +25,43 @@ void    init_fractol(t_fractol *fractol, int argc, char *argv[])
         ft_putendl_fd("Usage: ./fract_ol [m(mandel), j(julia), ...] [cx] [cy]", 1);
         ft_error();
     }
-    fractol->type = ft_strdup(argv[1]);
     fractol->zoom = HEIGHT / 4;
     fractol->mouse_x = 0;
     fractol->mouse_y = 0;
-    fractol->offset_x = -0.5;
+    fractol->offset_x = 0;
     fractol->offset_y = 0;
-    fractol->iter = 50;
+    fractol->iter = 100;
     fractol->color = 0xFFFFFFFF;
+    fractol->type = ft_strdup(argv[1]);
+    printf("type: %s", fractol->type);
+    if (ft_strcmp(fractol->type, "m") == 0)
+        fractol->offset_x = -0.5;
+    if (ft_strcmp(fractol->type, "j") == 0)
+    {
+        if (argc == 4)
+        {
+            fractol->julia_real = atof(argv[2]);
+            fractol->julia_imag = atof(argv[3]);
+        }
+        else
+        {
+            fractol->julia_real = -0.8;
+fractol->julia_imag = 0.156;
+        }
+    }
 }
 
-
-// #include <memory.h>
-// void clear_window(mlx_image_t *img)
-// {
-//     memset(img->pixels, 0x00000000, img->width * img->height * sizeof(int32_t));
-// }
 
 int calculate_fractol(t_fractol *fractol, t_complex *c, int x, int y)
 {
     if (ft_strcmp(fractol->type, "m") == 0)
         return (calculate_mandelbrot(fractol, c));
     else if (ft_strcmp(fractol->type, "j") == 0)
-        return (calculate_julia(fractol, c, x, y));
+        return (calculate_julia(fractol, x, y));
+    else if (ft_strcmp(fractol->type, "b") == 0)
+        return (calc_burning_ship(fractol, c));
+    else 
+        printf("\nbad fractol type\n");
     return (exit_fractol(fractol), 0);
 }
 
@@ -64,8 +78,11 @@ int draw_fractol(t_fractol *fractol)
         x = -1;
         while (++x < WIDTH)
         {
-            c.real = (x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
-            c.imag = (y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
+            if (ft_strcmp(fractol->type, "j") != 0)
+            {
+                c.real = (x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
+                c.imag = (y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
+            }
             iter = calculate_fractol(fractol, &c, x, y);
             my_mlx_pixel_put(fractol->img, x, y, calc_color(iter, fractol->iter, fractol->color));
             // printf("x: %d, y: %d, iter: %d\n", x, y, iter);

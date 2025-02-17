@@ -1,6 +1,7 @@
 CFILES =	src/main.c \
 			src/julia.c \
 			src/mandel.c \
+			src/burning.c \
 			src/color.c \
 			src/keyhooks.c \
 

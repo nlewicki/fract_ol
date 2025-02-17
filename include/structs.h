@@ -6,7 +6,7 @@
 /*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:08:14 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/17 15:13:38 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2025/02/17 15:44:22 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,19 @@ typedef struct s_window
 	int endian;
 } t_window;
 
+typedef struct s_complex
+{
+	double	real;
+	double	imag;
+}	t_complex;
+
 typedef struct s_fractol
 {
 	mlx_t*			mlx;
 	mlx_image_t*	img;
 	t_window		window;
+	double			julia_real;
+	double			julia_imag;
 	char 			*type;
 	int				zoom;
 	double			old_zoom;
@@ -58,10 +66,5 @@ typedef struct s_coords
 	int	y;
 }	t_coords;
 
-typedef struct s_complex
-{
-	double	real;
-	double	imag;
-}	t_complex;
 
 #endif

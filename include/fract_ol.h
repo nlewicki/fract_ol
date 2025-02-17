@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fract_ol.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:28:36 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/17 11:03:18 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/17 15:58:43 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void my_mlx_pixel_put(mlx_image_t* img, int x, int y, int color);
 int calc_color(int iter, int max_iter, int start_color);
 int draw_fractol(t_fractol *fractol);
 int calculate_mandelbrot(t_fractol *fractol, t_complex *c);
-int	calculate_julia(t_fractol *fractol, t_complex *c, int x, int y);
+int	calculate_julia(t_fractol *fractol, int x, int y);
+int	calc_burning_ship(t_fractol *fractol, t_complex *c);
 
 #endif
