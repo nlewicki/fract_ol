@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:08:14 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/14 13:09:32 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/17 15:13:38 by nicolewicki      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,11 @@
 
 # include "fract_ol.h"
 
-#define WIDTH 800
-#define HEIGHT 800
+#define WIDTH 500
+#define HEIGHT 500
+#define MIN_ZOOM 10
+#define MAX_ITER 250
+#define MIN_ITER 10
 
 typedef struct s_color
 {
@@ -40,6 +43,7 @@ typedef struct s_fractol
 	t_window		window;
 	char 			*type;
 	int				zoom;
+	double			old_zoom;
 	double			offset_x;
 	double			offset_y;
 	double			mouse_x;
