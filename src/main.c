@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2025/02/14 13:13:06 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/17 11:02:17 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void    init_fractol(t_fractol *fractol, int argc, char *argv[])
     fractol->mouse_y = 0;
     fractol->offset_x = -0.5;
     fractol->offset_y = 0;
-    fractol->iter = 100;
+    fractol->iter = 50;
     fractol->color = 0xFFFFFFFF;
 }
 
@@ -41,6 +41,15 @@ void    init_fractol(t_fractol *fractol, int argc, char *argv[])
 // {
 //     memset(img->pixels, 0x00000000, img->width * img->height * sizeof(int32_t));
 // }
+
+int calculate_fractol(t_fractol *fractol, t_complex *c, int x, int y)
+{
+    if (ft_strcmp(fractol->type, "m") == 0)
+        return (calculate_mandelbrot(fractol, c));
+    else if (ft_strcmp(fractol->type, "j") == 0)
+        return (calculate_julia(fractol, c, x, y));
+    return (exit_fractol(fractol), 0);
+}
 
 int draw_fractol(t_fractol *fractol)
 {
@@ -57,7 +66,7 @@ int draw_fractol(t_fractol *fractol)
         {
             c.real = (x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
             c.imag = (y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
-            iter = calculate_mandelbrot(fractol, &c);
+            iter = calculate_fractol(fractol, &c, x, y);
             my_mlx_pixel_put(fractol->img, x, y, calc_color(iter, fractol->iter, fractol->color));
             // printf("x: %d, y: %d, iter: %d\n", x, y, iter);
         }
@@ -84,6 +93,8 @@ int main(int argc, char *argv[])
 		return (2);
     draw_fractol(&fractol);
 	mlx_key_hook(fractol.mlx, key_hook, &fractol);
+    mlx_scroll_hook(fractol.mlx, mouse_hook, &fractol);
+    mlx_cursor_hook(fractol.mlx, cursor_hook, &fractol);
     mlx_loop(fractol.mlx);
     return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:04:24 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/14 13:10:47 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/17 11:50:43 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,17 @@ void	key_hook(mlx_key_data_t key, void *param)
     if (key.key == MLX_KEY_M && fractol->iter > 10)
         fractol->iter -= 10;
     draw_fractol(fractol);
+}
+
+void	mouse_hook(double xdelta, double ydelta, void *param)
+{
+
+}
+
+void cursor_hook(double xpos, double ypos, void *param)
+{
+    t_fractol *fractol = (t_fractol *)param;
+
+    fractol->mouse_x = xpos;
+    fractol->mouse_y = ypos;
 }
