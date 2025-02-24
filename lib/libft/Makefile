@@ -6,13 +6,14 @@
 #    By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/12 11:07:18 by nlewicki          #+#    #+#              #
-#    Updated: 2024/09/25 10:49:24 by nlewicki         ###   ########.fr        #
+#    Updated: 2025/02/24 12:44:01 by nlewicki         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FILES = ft_bzero.c \
 		ft_atoi.c \
 		ft_atol.c \
+		ft_atof.c \
 		ft_calloc.c \
 		ft_isalpha.c \
 		ft_isalnum.c \

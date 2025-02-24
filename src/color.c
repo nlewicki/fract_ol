@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:04:30 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/24 12:20:30 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/24 12:41:05 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	my_mlx_pixel_put(mlx_image_t *img, int x, int y, int color)
 	}
 }
 
-void	calc_color2(float t, t_color *color)
+static void	calc_color2(float t, t_color *color)
 {
 	if (t < 0.4)
 	{
