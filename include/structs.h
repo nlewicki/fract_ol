@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicolewicki <nicolewicki@student.42.fr>    +#+  +:+       +#+        */
+/*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:08:14 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/17 15:44:22 by nicolewicki      ###   ########.fr       */
+/*   Updated: 2025/02/24 11:13:06 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ typedef struct s_fractol
 	double			mouse_y;
 	u_int32_t		color;
 	int				iter;
+	int				argc;
+	char			**argv;
 }	t_fractol;
 
 typedef struct s_coords

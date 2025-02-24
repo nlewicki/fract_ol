@@ -4,6 +4,7 @@ CFILES =	src/main.c \
 			src/burning.c \
 			src/color.c \
 			src/keyhooks.c \
+			src/setup.c \
 
 NAME = fractol
 CC = cc
