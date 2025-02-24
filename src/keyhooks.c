@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:04:24 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/24 11:52:08 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/24 12:09:34 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,18 @@ void	exit_fractol(t_fractol *fractol)
 	if (fractol->mlx)
 		mlx_terminate(fractol->mlx);
 	exit(1);
+}
+
+void	key_hook2(mlx_key_data_t key, t_fractol *fractol)
+{
+	if (key.key == MLX_KEY_1)
+		setup_for_julia(fractol);
+	else if (key.key == MLX_KEY_2)
+		setup_for_mandelbrot(fractol);
+	else if (key.key == MLX_KEY_3)
+		setup_for_burningship(fractol);
+	else
+		return ;
 }
 
 void	key_hook(mlx_key_data_t key, void *param)
@@ -41,12 +53,9 @@ void	key_hook(mlx_key_data_t key, void *param)
 		fractol->iter += 10;
 	else if (key.key == MLX_KEY_M && fractol->iter > MIN_ITER)
 		fractol->iter -= 10;
-	else if (key.key == MLX_KEY_1)
-		setup_for_julia(fractol);
-	else if (key.key == MLX_KEY_2)
-		setup_for_mandelbrot(fractol);
-	else if (key.key == MLX_KEY_3)
-		setup_for_burningship(fractol);
+	else if (key.key == MLX_KEY_1 || key.key == MLX_KEY_2
+		|| key.key == MLX_KEY_3)
+		key_hook2(key, fractol);
 	else
 		return ;
 	draw_fractol(fractol);
@@ -54,28 +63,28 @@ void	key_hook(mlx_key_data_t key, void *param)
 
 void	mouse_hook(double xdelta, double ydelta, void *param)
 {
-	t_fractol	*fractol;
+	t_fractol	*frac;
 	double		zoom_factor;
-	double		mouse_x_before_zoom;
-	double		mouse_y_before_zoom;
+	double		xbz;
+	double		ybz;
 
 	zoom_factor = 1.1;
-	fractol = (t_fractol *)param;
+	frac = (t_fractol *)param;
 	(void)xdelta;
-	mouse_x_before_zoom = (fractol->mouse_x - WIDTH / 2.0) / fractol->zoom + fractol->offset_x;
-	mouse_y_before_zoom = (fractol->mouse_y - HEIGHT / 2.0) / fractol->zoom + fractol->offset_y;
-	fractol->old_zoom = fractol->zoom;
+	xbz = (frac->mouse_x - WIDTH / 2.0) / frac->zoom + frac->offset_x;
+	ybz = (frac->mouse_y - HEIGHT / 2.0) / frac->zoom + frac->offset_y;
+	frac->old_zoom = frac->zoom;
 	if (ydelta > 0)
-		fractol->zoom *= zoom_factor;
+		frac->zoom *= zoom_factor;
 	else if (ydelta < 0)
-		fractol->zoom /= zoom_factor;
-	if (fractol->zoom < MIN_ZOOM)
-		fractol->zoom = MIN_ZOOM;
-	if (fractol->zoom != fractol->old_zoom)
+		frac->zoom /= zoom_factor;
+	if (frac->zoom < MIN_ZOOM)
+		frac->zoom = MIN_ZOOM;
+	if (frac->zoom != frac->old_zoom)
 	{
-		fractol->offset_x = mouse_x_before_zoom - (fractol->mouse_x - WIDTH / 2.0) / fractol->zoom;
-		fractol->offset_y = mouse_y_before_zoom - (fractol->mouse_y - HEIGHT / 2.0) / fractol->zoom;
-		draw_fractol(fractol);
+		frac->offset_x = xbz - (frac->mouse_x - WIDTH / 2.0) / frac->zoom;
+		frac->offset_y = ybz - (frac->mouse_y - HEIGHT / 2.0) / frac->zoom;
+		draw_fractol(frac);
 	}
 }
 
