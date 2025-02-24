@@ -5,6 +5,7 @@ CFILES =	src/main.c \
 			src/color.c \
 			src/keyhooks.c \
 			src/setup.c \
+			src/utils.c \
 
 NAME = fractol
 CC = cc

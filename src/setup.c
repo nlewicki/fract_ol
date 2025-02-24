@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 11:20:37 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/24 13:27:32 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/24 13:48:40 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,7 @@ void	setup_for_julia(t_fractol *fractol)
 	fractol->type = "j";
 	fractol->offset_x = 0;
 	fractol->offset_y = 0;
-	if (fractol->argc == 4)
-	{
-		fractol->julia_real = ft_atof(fractol->argv[2]);
-		fractol->julia_imag = ft_atof(fractol->argv[3]);
-		printf("julia_real: %f\n", fractol->julia_real);
-		printf("julia_imag: %f\n", fractol->julia_imag);
-	}
-	else
+	if (fractol->argc != 4)
 	{
 		fractol->julia_real = -0.8;
 		fractol->julia_imag = 0.156;

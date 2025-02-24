@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:28:36 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/24 12:40:48 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/24 13:57:19 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,9 @@ int		calc_burning_ship(t_fractol *fractol, t_complex *c);
 void	setup_for_julia(t_fractol *fractol);
 void	setup_for_mandelbrot(t_fractol *fractol);
 void	setup_for_burningship(t_fractol *fractol);
+
+void	ft_error(void);
+int		is_nan(float num);
+void	check_args(t_fractol *fractol, int argc, char *argv[]);
 
 #endif
