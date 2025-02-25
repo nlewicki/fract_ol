@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2025/02/25 10:59:31 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/25 11:19:48 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ void	init_fractol(t_fractol *fractol, int argc, char *argv[])
 	fractol->offset_x = 0;
 	fractol->offset_y = 0;
 	fractol->iter = 100;
-	fractol->color = 0xFFFFFFFF;
 	fractol->argc = argc;
 	fractol->argv = argv;
 	if (ft_strcmp(fractol->type, "b") == 0)
