@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/24 11:20:37 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/25 10:33:37 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/25 10:56:40 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,4 @@ void	setup_for_burningship(t_fractol *fractol)
 	fractol->type = "b";
 	fractol->offset_x = -0.5;
 	fractol->offset_y = -0.5;
-	fractol->color = 0xFF4169E1;
 }
