@@ -6,7 +6,7 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 13:04:24 by nlewicki          #+#    #+#             */
-/*   Updated: 2025/02/25 10:37:19 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/25 12:26:27 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,13 @@ void	key_hook(mlx_key_data_t key, void *param)
 	fractol = (t_fractol *)param;
 	if (key.key == MLX_KEY_ESCAPE)
 		exit_fractol(fractol);
-	else if (key.key == MLX_KEY_S)
+	else if (key.key == MLX_KEY_S || key.key == MLX_KEY_DOWN)
 		fractol->offset_y += 0.1;
-	else if (key.key == MLX_KEY_W)
+	else if (key.key == MLX_KEY_W || key.key == MLX_KEY_UP)
 		fractol->offset_y -= 0.1;
-	else if (key.key == MLX_KEY_D)
+	else if (key.key == MLX_KEY_D || key.key == MLX_KEY_RIGHT)
 		fractol->offset_x += 0.1;
-	else if (key.key == MLX_KEY_A)
+	else if (key.key == MLX_KEY_A || key.key == MLX_KEY_LEFT)
 		fractol->offset_x -= 0.1;
 	else if (key.key == MLX_KEY_SPACE && fractol->iter < MAX_ITER)
 		fractol->iter += 10;
