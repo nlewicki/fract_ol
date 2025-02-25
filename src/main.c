@@ -6,14 +6,11 @@
 /*   By: nlewicki <nlewicki@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:22:14 by nicolewicki       #+#    #+#             */
-/*   Updated: 2025/02/24 13:59:23 by nlewicki         ###   ########.fr       */
+/*   Updated: 2025/02/25 10:43:54 by nlewicki         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fract_ol.h"
-
-// handle invalid input exmaple ./fractol j abc abc
-// leak!!
 
 void	init_fractol(t_fractol *fractol, int argc, char *argv[])
 {
@@ -86,7 +83,16 @@ int	draw_fractol(t_fractol *fractol)
 // {
 // 	system("leaks fractol");
 // }
-	// atexit(ft_leaks);
+// 	atexit(ft_leaks);
+/*
+-0.70176 -0.3842  // Lightning Shape
+0.285 0.01        // Swirling Nebula
+-0.8 0.156        // Burning Star
+0.355 0.355       // Ghostly Web
+-0.4 0.6          // Dark Spirals
+-1.476 0.0        // Butterfly Wings
+-0.75 0.11        // Electric Storm
+*/
 
 int	main(int argc, char *argv[])
 {
